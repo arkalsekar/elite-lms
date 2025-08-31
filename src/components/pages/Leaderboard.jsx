@@ -1,12 +1,15 @@
 import { supabase } from "../../supabaseClient"
 import { useState, useEffect } from "react";
-
+import { useSearchParams } from "react-router-dom";
 
 const Leaderboard = () => {
     const [ProfileData, setProfileData] = useState(null);
+    const [searchParams] = useSearchParams();
+    const q = searchParams.get("q") || "";
+
     useEffect(() => {
         // Get current session
-        if (!ProfileData) {
+        if (!ProfileData && q === "") {
             const fetchProfileData = async () => {
                 const { data: profData, error: error } = await supabase
                     .from('profiles')
@@ -24,8 +27,30 @@ const Leaderboard = () => {
             }
             fetchProfileData();
         }
-    }, [ProfileData]);
+    }, [q, ProfileData]);
 
+    useEffect(() => {
+         if (!ProfileData && q !== "") {
+            const fetchProfileData = async () => {
+                const { data: profData, error: error } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('domain', q) // Filter by domain if q is present
+                    .order('points', { ascending: false }) // Order by points in descending 
+                    .limit(10);  // Limit to top 10 users
+                if (error) {
+                    console.error("Error fetching profile data:", error);
+                }
+                else {
+                    console.log("Profile data fetched successfully:", profData);
+                    setProfileData(profData);
+                    console.log("ProfileData state updated:", ProfileData);
+                }
+            }
+            fetchProfileData();
+        }
+
+    }, [q, ProfileData]);
 
     return (
         <>
