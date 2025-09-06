@@ -26,12 +26,34 @@ const Dashboard = (props) => {
                     .single();
                 if (error) {
                     console.error("Error fetching user domain:", error);
-                }   
+                }
                 else {
                     console.log("User domain fetched successfully:", userData);
                     setDomain(userData.domain);
+
+
+                    if (resources == null) {
+                        const fetchResources = async () => {
+                            const { data: resData, error: error } = await supabase
+                                .from('domain_resources')
+                                .select('*')
+                                .eq('domain_name', domain);
+                            if (error) {
+                                console.error("Error fetching resources:", error);
+                            }
+                            else {
+                                console.log("Resources fetched successfully:", resData);
+                                setResources(resData);
+                                console.log("Final:", resources);
+                            }
+                        }
+                        fetchResources();
+                    }
+
+
+
                 }
-            }   
+            }
 
         };
 
@@ -46,43 +68,40 @@ const Dashboard = (props) => {
         return () => {
             listener.subscription.unsubscribe();
         };
-    }, []);
+    }, [domain]);
 
 
-    if (resources == null) {
-        const fetchResources = async () => {
-            const { data: resData, error: error } = await supabase
-                .from('domain_resources')
-                .select('*')
-                .eq('domain_name', String.toString(domain));
-            if (error) {
-                console.error("Error fetching resources:", error);
-            }
-            else {
-                console.log("Resources fetched successfully:", resData);
-                setResources(resData);
-                console.log("Final:", resources);
-            }
-        }
-        fetchResources();
-    }
-    
+
     return (
         <>
             <div className="container">
                 <h1 className="text-bold my-3">Dashboard</h1>
                 <p>Welcome to the Dashboard page. </p>
+                <h2>Resources for {domain} Domain</h2>
                 {resources ? (
                     <div>
-                        <h2>Resources for {domain} Domain</h2>
-                        <ul className="list-group my-4">
-                            {resources.map((res) => (
-                                <li key={res.id} className="list-group-item mb-3">
-                                    <h5>{res.res_title}</h5>
-                                    <p>{res.res_content}</p>
-                                </li>
-                            ))}
-                        </ul>
+
+
+
+                        <div class="accordion" id="accordionExample">
+                            {/* Map through resources and create an accordion item for each */
+                            resources.map((res, index) => (
+                                <div class="accordion-item mb-3" key={index}>
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target={`#collapse${index}`} aria-expanded="false" aria-controls={`collapse${index}`}>
+                                            {res.res_title}
+                                        </button>
+                                    </h2>
+                                    <div id={`collapse${index}`} class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                                        <div class="accordion-body">
+                                            <strong>{res.res_content}</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                            }
+                        </div>
+
                     </div>
                 ) : (
                     <p>Loading resources...</p>

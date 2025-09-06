@@ -1,6 +1,6 @@
 import { supabase } from "../../supabaseClient"
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 const Leaderboard = () => {
     const [ProfileData, setProfileData] = useState(null);
@@ -56,8 +56,11 @@ const Leaderboard = () => {
         <>
             <div className="container">
                 <h1 className="text-bold my-3">Leader Board</h1>
-
-                <h3 className="my-4">Here are the current top 10 performers !!</h3>
+                <h3 className="mt-2">Here are the current top 10 performers !!</h3>
+                {/* Link to access leaderboard of q=FullStack  */}
+                <Link to="/leaderboard?q=FullStack" className="btn btn-success mx-2 my-2" target="_blank">FullStack</Link>
+                <Link to="/leaderboard?q=AIML" className="btn btn-primary mx-2 my-2" target="_blank">AIML</Link>
+                <Link to="/leaderboard?q=CyberSecurity" className="btn btn-danger mx-2 my-2" target="_blank">CyberSecurity</Link>
                 {ProfileData ? (
                     <table className="table table-striped table-hover table-bordered">
                         <thead className="table-light">
