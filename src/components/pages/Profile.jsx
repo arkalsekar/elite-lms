@@ -27,13 +27,13 @@ const Profile = () => {
     }, []);
 
 
-    const handleChange = (e) => {
-        console.log("Change detected", session.user.id);
-        setData({ ...data, [e.target.id]: e.target.value });
-        console.log("Current data state:", [e.target.id], e.target.value);
-        // console.log(dat  a);
-  }
-
+    function handleChange(e) {
+  const { name, value } = e.target;
+  setProfileData(prev => ({
+    ...prev,
+    [name]: value,
+  }));
+}
   
 
    
@@ -106,9 +106,9 @@ const Profile = () => {
                 {
                     ProfileData ? (
                             <form onSubmit={handleSubmit} action="/profile" method="post">
-                    <div className="mb-3">
+                    <div className="mb-3">  
                         <label for="name" className="form-label">Full Name</label>
-                        <input  onChange={handleChange} type="text" className="form-control" id="name1" placeholder="Abdul Rehman Kalsekar" value={ProfileData.name} required/>
+                        <input name="name"  onChange={handleChange} type="text" className="form-control" id="name1" placeholder="Abdul Rehman Kalsekar" value={ProfileData.name} required/>
                     </div>
 {/* 
                     <div className="mb-3">
